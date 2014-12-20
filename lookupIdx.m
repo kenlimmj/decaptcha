@@ -1,7 +1,7 @@
 function result = lookupIdx(idx)
     smallChars = 'abcdefghijklmnopqrstuvwxyz';
     bigChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    
+
     if (idx <= 10)
         result = idx - 1;
     elseif (idx > 10 && idx <= 36)

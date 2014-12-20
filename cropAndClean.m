@@ -1,7 +1,7 @@
 function result = cropAndClean(imgData, dataDim)
     % Convert the image to an inverted binary representation
     compImg = imcomplement(im2bw(imgData));
-    
+
     % Extract connected components
     [Ilabel, ~] = bwlabel(compImg);
     Iprops = regionprops(Ilabel);
@@ -9,7 +9,7 @@ function result = cropAndClean(imgData, dataDim)
     Ibox = reshape(Ibox, [4, length(Ibox)/4]);
 
     out = ceil(Ibox(1:2, 1));
-    
+
     % Calculate the crop margins
     OCRStartCol = out(1, 1);
     OCRStartRow = out(2, 1);

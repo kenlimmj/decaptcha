@@ -7,25 +7,21 @@ function nn = genNeuralRecognizer(images, labels, classes)
     blocksPerImage = floor((size(images{1}) ./ CELL_SIZE - BLOCK_SIZE) ./ (BLOCK_SIZE - ceil(BLOCK_SIZE / 2)) + 1);
     hogSize = prod([blocksPerImage, BLOCK_SIZE, NUM_BINS]);
 
-%     trainingData = zeros([hogSize, numel(images)]);
     trainingData = zeros([numel(images{1}), numel(images)]);
     trainingLabels = zeros([classes, numel(images)]);
 
-    for i = 1:numel(images)
+    parfor i = 1:numel(images)
         fprintf('Processing image %d of %d\n', i, numel(images));
-        
-%         trainingData(:, i) = extractHOGFeatures(images{i}, 'CellSize', CELL_SIZE);
+
         trainingData(:, i) = images{i}(:);
         trainingLabels(:, i) = ind2vec(labels(i), classes);
     end
 
     nn = patternnet(classes * 2, 'trainscg');
     nn.trainParam.epochs = 5000;
-    nn.trainParam.max_fail = 10;
 
-    % Prevent the training window from showing up
-    % nn.trainParam.showWindow = false;
-    % nn.trainParam.showCommandLine = false;
+    % Validate at least 100 sets
+    nn.trainParam.max_fail = max(100, numel(images) / 100);
 
-    nn = train(nn, trainingData, trainingLabels);
+    nn = train(nn, trainingData, trainingLabels, 'useParallel', 'yes', 'useGPU', 'yes');
 end
